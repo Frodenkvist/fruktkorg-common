@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * Simple utility helper for converting stuff to json.
  */
-public class JS {
+public class JSON {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -19,24 +19,24 @@ public class JS {
         mapper.registerModule(new Jdk8Module());
     }
 
-    private JS() {
+    private JSON() {
         //NO create, only static...
     }
 
     public static ResponseEntity<JsonNode> message(HttpStatus status, String message, Object... args) {
-        return ResponseEntity.status(status).body(JS.message(String.format(message, args)));
+        return ResponseEntity.status(status).body(JSON.message(String.format(message, args)));
     }
 
     public static ResponseEntity<JsonNode> message(HttpStatus status, Optional<?> message) {
-        return message.isPresent() ? ResponseEntity.status(status).body(JS.parse(message.get()))
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(JS.parse("Not Present"));
+        return message.isPresent() ? ResponseEntity.status(status).body(JSON.parse(message.get()))
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(JSON.parse("Not Present"));
     }
 
     public static ResponseEntity<JsonNode> message(HttpStatus status, Object o) {
         if (o instanceof String) {
             o = message((String) o);
         }
-        return ResponseEntity.status(status).body(JS.parse(o));
+        return ResponseEntity.status(status).body(JSON.parse(o));
     }
 
     public static JsonNode message(String message) {
