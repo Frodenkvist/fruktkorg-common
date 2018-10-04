@@ -8,6 +8,6 @@ public class RabbitMQRouting {
     }
 
     public enum Person {
-        CREATE
+        CREATE, DELETE
     }
 }
