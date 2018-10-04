@@ -2,10 +2,13 @@ package com.common.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -63,6 +66,26 @@ public class JSON {
 
         public void setMessage(String message) {
             this.message = message;
+        }
+    }
+
+    public static ResponseEntity<JsonNode> message(RestResponse<?> restResponse) {
+        if(restResponse.getResponse() != null) {
+            Object response = restResponse.getResponse();
+            if (response instanceof ArrayNode) {
+                // ensure that we never return an array.
+                ObjectNode o = mapper.createObjectNode();
+                o.set("result", (ArrayNode) response);
+                return JSON.message(HttpStatus.OK, o);
+            } else if (response instanceof List) {
+                ObjectNode o = mapper.createObjectNode();
+                o.set("result", JSON.parse(response));
+                return JSON.message(HttpStatus.OK, o);
+            } else {
+                return JSON.message(HttpStatus.OK, response);
+            }
+        } else {
+            return JSON.message(restResponse.getStatusCode(), restResponse.getErrorMessage());
         }
     }
 }
